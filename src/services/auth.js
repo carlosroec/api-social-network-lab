@@ -32,10 +32,10 @@ export default class AuthService {
             Reflect.deleteProperty(user, 'salt');
 
             return { user, token };
-        } catch (e) {
-            this.logger.error(e);
+        } catch (err) {
+            this.logger.error(err);
 
-            throw e;
+            throw err;
         }
     }
 
