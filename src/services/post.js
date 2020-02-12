@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import user from "../models/user";
 
 export default class PostService {
     constructor(logger, postModel, friendModel) {

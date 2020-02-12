@@ -41,16 +41,27 @@ export default class AuthService {
 
     async SignIn(email, password) {
         const userRecord = await this.userModel.findOne({ email });
+        const status = {
+            code: '',
+            message: ''
+        };
 
         if (!userRecord) {
-            throw new Error('User not registered');
+            status.code = 'NO_USER';
+            status.message = 'User not registered';
+            // throw new Error('User not registered');
+            return { status };
         }
 
         this.logger.silly('Checking password');
         const validPassword = await argon2.verify(userRecord.password, password);
 
         if (!validPassword) {
-            throw new Error('Invalid Password');
+            status.code = 'INVALID_PASSWORD';
+            status.message = 'Invalid Password';
+
+            //throw new Error('Invalid Password');
+            return { status };
         }
 
         this.logger.silly('Password is valid!');
@@ -65,7 +76,9 @@ export default class AuthService {
         Reflect.deleteProperty(user, 'password');
         Reflect.deleteProperty(user, 'salt');
 
-        return { user, token };
+        status.code = 'OK';
+
+        return { user, status, token };
     }
 
     generateToken(user) {

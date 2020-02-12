@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { celebrate, Joi } from 'celebrate';
 import PostService from '../../services/post';
 import logger from '../../services/logger';
 import postModel from '../../models/post';
@@ -10,20 +11,29 @@ export default (app) => {
     app.use('/post', route);
 
     // Create a Post
-    route.post('/', async (req, res, next) => {
-        logger.debug('Calling Create endpoint with body: %o', req.body);
+    route.post('/',
+        celebrate({
+            body: Joi.object({
+                content: Joi.string().required(),
+                isPublic: Joi.boolean().required(),
+                userID: Joi.string().required()
+            })
+        }),
+        async (req, res, next) => {
+            logger.debug('Calling Create endpoint with body: %o', req.body);
 
-        try {
-            const postServiceInstance = new PostService(logger, postModel);
-            const post = await postServiceInstance.Create(req.body);
+            try {
+                const postServiceInstance = new PostService(logger, postModel);
+                const post = await postServiceInstance.Create(req.body);
 
-            return res.status(201).json(post);
-        } catch (err) {
-            logger.error('error', err);
+                return res.status(201).json(post);
+            } catch (err) {
+                logger.error('error', err);
 
-            return next(err);
+                return next(err);
+            }
         }
-    });
+    );
 
     // Find a Post
     route.get('/:postID', async (req, res, next) => {

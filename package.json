@@ -25,6 +25,7 @@
   "homepage": "https://github.com/carlosroec/api-social-network-lab#readme",
   "dependencies": {
     "argon2": "^0.26.0",
+    "celebrate": "^11.0.1",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
