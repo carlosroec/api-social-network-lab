@@ -1,7 +1,11 @@
+import mongoose from "mongoose";
+import user from "../models/user";
+
 export default class PostService {
-    constructor(logger, postModel) {
+    constructor(logger, postModel, friendModel) {
         this.logger = logger;
         this.postModel = postModel;
+        this.friendModel = friendModel;
     }
 
     async Create({ content, isPublic, userID }) {
@@ -104,6 +108,53 @@ export default class PostService {
             this.logger.silly('Listing my Posts records');
 
 
+            const posts = await this.friendModel.aggregate([
+                {
+                    "$match": { "userID": mongoose.Types.ObjectId(userID) }
+                },
+                {
+                    "$lookup": {
+                        "from": "posts",
+                        "localField": "friendID",
+                        "foreignField": "userID",
+                        "as": "posts"
+                    }
+                },
+                {
+                    "$unwind": {
+                        "path": "$posts",
+                        "preserveNullAndEmptyArrays": true
+                    }
+                },
+                {
+                    "$lookup": {
+                        "from": "users",
+                        "localField": "posts.userID",
+                        "foreignField": "_id",
+                        "as": "posts.user"
+                    }
+                },
+                {
+                    "$unwind": {
+                        "path": "$posts.user",
+                        "preserveNullAndEmptyArrays": true
+                    }
+                }
+            ]);
+
+            const postsWithUser = posts.map(post => ({
+                "_id": post.posts._id,
+                "user": {
+                    "_id": post.posts.user._id,
+                    "name": post.posts.user.name,
+                    "email": post.posts.user.email,
+                },
+                "content": post.posts.content,
+                "createdAt": post.createdAt,
+                "updatedAt": post.updatedAt
+            }));
+
+            return postsWithUser;
         } catch (err) {
             this.logger.error(err);
 

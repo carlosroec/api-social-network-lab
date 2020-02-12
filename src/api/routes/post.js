@@ -2,6 +2,7 @@ import { Router } from 'express';
 import PostService from '../../services/post';
 import logger from '../../services/logger';
 import postModel from '../../models/post';
+import friendModel from '../../models/friend';
 
 const route = Router();
 
@@ -58,13 +59,29 @@ export default (app) => {
 
     // Destroy a Post
     route.delete('/:postID', async (req, res, next) => {
-        logger.debug('Calling Create endpoint with body: %o', req.params);
+        logger.debug('Calling Delete endpoint with body: %o', req.params);
 
         try {
             const postServiceInstance = new PostService(logger, postModel);
             const post = await postServiceInstance.Destroy(req.params);
 
             return res.status(200).json(post);
+        } catch (err) {
+            logger.error('error', err);
+
+            return next(err);
+        }
+    });
+
+    // Get all post (my post + friend [public] posts)
+    route.get('/my/:userID', async (req, res, next) => {
+        logger.debug('Calling My Posts endpoint with body: %o', req.params);
+
+        try {
+            const postServiceInstance = new PostService(logger, postModel, friendModel);
+            const posts = await postServiceInstance.MyPosts(req.params);
+
+            return res.status(200).json(posts);
         } catch (err) {
             logger.error('error', err);
 
