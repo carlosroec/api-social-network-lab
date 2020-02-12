@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+const ObjectId = mongoose.Schema.ObjectId;
 const Post = new mongoose.Schema(
     {
         content: {

@@ -3,12 +3,12 @@ import mongoose from 'mongoose';
 const ObjectId = mongoose.Schema.ObjectId;
 const Friend = new mongoose.Schema(
     {
-        myID: {
+        userID: {
             type: ObjectId,
             required: true,
             index: true,
         },
-        myFriendID: {
+        friendID: {
             type: ObjectId,
             required: true,
             index: true,

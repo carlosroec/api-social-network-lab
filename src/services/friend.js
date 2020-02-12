@@ -4,13 +4,13 @@ export default class FriendService {
         this.friendModel = friendModel;
     }
 
-    async Add({myID, myFriendID}) {
+    async Add({userID, friendID}) {
         try {
             this.logger.silly('Creating a Friend record');
 
             const friendRecord = await this.friendModel.create({
-                myID,
-                myFriendID
+                userID,
+                friendID
             });
 
             const friend = friendRecord.toObject();
