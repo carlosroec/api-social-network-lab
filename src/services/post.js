@@ -234,7 +234,7 @@ export default class PostService {
 
             const postsWithUser = [];
             posts.forEach(post => {
-                if (post.posts.user._id.toString() === userID.toString()) {
+                if (post.posts && post.posts.user && post.posts.user._id.toString() === userID.toString()) {
                     postsWithUser.push({
                         "_id": post.posts._id,
                         "user": {
