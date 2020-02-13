@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
 import middlewares from '../middleware'
-import PostService from '../../services/post';
+import PostService from '../../services/Post';
 import logger from '../../services/logger';
 import postModel from '../../models/post';
 import friendModel from '../../models/friend';
