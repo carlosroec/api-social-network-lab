@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
 import middlewares from '../middleware'
-import PostService from '../../services/Post';
+import PostService from '../../services/post';
 import logger from '../../services/logger';
-import postModel from '../../models/post';
+import postModel from '../../models/Post';
 import friendModel from '../../models/friend';
 
 const route = Router();
