@@ -16,7 +16,6 @@ export default (app) => {
         logger.debug('Calling My Posts endpoint with body: %o', req.params);
 
         try {
-            console.log(req.currentUser);
             const currentUser = { userID: req.currentUser._id };
             const postServiceInstance = new PostService(logger, postModel, friendModel);
             const posts = await postServiceInstance.MyPosts(currentUser);
@@ -42,7 +41,7 @@ export default (app) => {
             logger.debug('Calling Create endpoint with body: %o', req.body);
 
             try {
-                const postServiceInstance = new PostService(logger, postModel);
+                const postServiceInstance = new PostService(logger, postModel, friendModel);
                 const post = await postServiceInstance.Create(req.body);
 
                 return res.status(201).json(post);
