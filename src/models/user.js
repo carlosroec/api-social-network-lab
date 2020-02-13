@@ -14,6 +14,7 @@ const User = new mongoose.Schema(
             index: true,
         },
         password: String,
+        profilePicture: String,
         salt: String,
         role: {
             type: String,
