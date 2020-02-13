@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { celebrate, Joi } from 'celebrate';
+import middlewares from '../middleware'
 import PostService from '../../services/post';
 import logger from '../../services/logger';
 import postModel from '../../models/post';
@@ -9,6 +10,24 @@ const route = Router();
 
 export default (app) => {
     app.use('/post', route);
+
+    // Get all post (my post + friend [public] posts)
+    route.get('/my', middlewares.isAuth, middlewares.attachCurrentUser,  async (req, res, next) => {
+        logger.debug('Calling My Posts endpoint with body: %o', req.params);
+
+        try {
+            console.log(req.currentUser);
+            const currentUser = { userID: req.currentUser._id };
+            const postServiceInstance = new PostService(logger, postModel, friendModel);
+            const posts = await postServiceInstance.MyPosts(currentUser);
+
+            return res.status(200).json(posts);
+        } catch (err) {
+            logger.error('error', err);
+
+            return next(err);
+        }
+    });
 
     // Create a Post
     route.post('/',
@@ -84,18 +103,18 @@ export default (app) => {
     });
 
     // Get all post (my post + friend [public] posts)
-    route.get('/my/:userID', async (req, res, next) => {
-        logger.debug('Calling My Posts endpoint with body: %o', req.params);
+    // route.get('/my/:userID', async (req, res, next) => {
+    //     logger.debug('Calling My Posts endpoint with body: %o', req.params);
 
-        try {
-            const postServiceInstance = new PostService(logger, postModel, friendModel);
-            const posts = await postServiceInstance.MyPosts(req.params);
+    //     try {
+    //         const postServiceInstance = new PostService(logger, postModel, friendModel);
+    //         const posts = await postServiceInstance.MyPosts(req.params);
 
-            return res.status(200).json(posts);
-        } catch (err) {
-            logger.error('error', err);
+    //         return res.status(200).json(posts);
+    //     } catch (err) {
+    //         logger.error('error', err);
 
-            return next(err);
-        }
-    });
+    //         return next(err);
+    //     }
+    // });
 }
